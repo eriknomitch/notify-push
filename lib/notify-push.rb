@@ -1,5 +1,6 @@
 require "dotenv"
 require "json"
+require "shellwords"
 
 Dotenv.load
 
@@ -13,11 +14,13 @@ module NotifyPush
     raise "No message supplied." if argv.length == 0
 
     message = argv[0]
+    title   = argv[1]
 
     Pusher.url = "http://#{ENV["PUSHER_KEY"]}:#{ENV["PUSHER_SECRET"]}@api.pusherapp.com/apps/#{ENV["PUSHER_APP_ID"]}"
 
     Pusher[CHANNEL_NAME].trigger('notification', {
-      message: message
+      message: message,
+      title: title
     })
   end
 
@@ -50,14 +53,19 @@ module NotifyPush
         data = JSON.parse(data)
 
         message = data["message"]
+        title   = data["title"].nil? ? "notify-push" : data["title"]
+        subtitle   = data["subtitle"].nil? ? false : data["subtitle"]
 
-        title = "notify-push"
+        args = ["-title", title, "-message", message]
 
-        system "terminal-notifier -title #{title} -message \"#{data["message"]}\""
+        if subtitle
+          args.concat ["-subtitle", subtitle]
+        end
+
+        system "terminal-notifier", *args
 
         puts "------"
         puts data
-        puts message
       end
 
       socket.connect
