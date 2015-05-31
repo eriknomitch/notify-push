@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.authors = ["Erik Nomitch"]
   s.date = "2015-05-31"
-  s.description = "TODO: longer description of your gem"
+  s.description = "A general purpose popup notifier sender/receiver using WebSockets (via Pusher)"
   s.email = "erik@nomitch.com"
   s.extra_rdoc_files = [
     "LICENSE",
