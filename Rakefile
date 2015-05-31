@@ -18,9 +18,11 @@ Jeweler::Tasks.new do |gem|
   gem.homepage = "http://github.com/eriknomitch/notify-push"
   gem.license = "MIT"
   gem.summary = %Q{A general purpose popup notifier sender/receiver using WebSockets (via Pusher)}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.description = "A general purpose popup notifier sender/receiver using WebSockets (via Pusher)"
   gem.email = "erik@nomitch.com"
   gem.authors = ["Erik Nomitch"]
+  gem.licenses = ["GPL-2"]
+  #s.files = `git ls-files`.split("\n")
   # dependencies defined in Gemfile
 end
 Jeweler::RubygemsDotOrgTasks.new
