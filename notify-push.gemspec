@@ -18,22 +18,12 @@ Gem::Specification.new do |s|
     "LICENSE",
     "README.md"
   ]
-  s.files = [
-    ".document",
-    "Gemfile",
-    "Gemfile.lock",
-    "LICENSE",
-    "README.md",
-    "Rakefile",
-    "VERSION",
-    "lib/notify-push.rb",
-    "test/helper.rb",
-    "test/test_notify-push.rb"
-  ]
+  s.files = `git ls-files`.split("\n")
   s.homepage = "http://github.com/eriknomitch/notify-push"
   s.licenses = ["GPL-2"]
   s.rubygems_version = "2.4.6"
   s.summary = "A general purpose popup notifier sender/receiver using WebSockets (via Pusher)"
+  s.executables << "notify-push"
 
   if s.respond_to? :specification_version then
     s.specification_version = 4
