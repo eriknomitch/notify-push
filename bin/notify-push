@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+begin
+  require "notify-push"
+rescue LoadError
+  require "rubygems"
+  require "notify-push"
+end
+
+puts ARGV
+
