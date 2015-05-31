@@ -12,6 +12,7 @@ GEM
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     docile (1.1.5)
+    dotenv (2.0.1)
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
     git (1.2.9.1)
@@ -81,6 +82,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.0)
+  dotenv
   jeweler (~> 2.0.1)
   pusher
   rdoc (~> 3.12)
