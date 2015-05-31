@@ -6,5 +6,4 @@ rescue LoadError
   require "notify-push"
 end
 
-puts ARGV
-
+NotifyPush.start_sender
