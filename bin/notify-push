@@ -6,4 +6,8 @@ rescue LoadError
   require "notify-push"
 end
 
-NotifyPush.start_sender
+if ARGV[0] == "--receiver"
+  exit NotifyPush::Receiver.start
+end
+
+NotifyPush.start_sender(ARGV)
