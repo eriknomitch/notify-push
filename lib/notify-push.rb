@@ -4,28 +4,52 @@ require "shellwords"
 
 Dotenv.load
 
+# ------------------------------------------------
+# MODULE->NOTIFY-PUSH ----------------------------
+# ------------------------------------------------
 module NotifyPush
 
   CHANNEL_NAME = "notify-push"
+  
+  # ----------------------------------------------
+  # ----------------------------------------------
+  # ----------------------------------------------
+  def self.start(argv)
+    if ["--receiver", "-r"].member? argv[0]
+      return NotifyPush::Receiver.start(argv)
+    end
 
-  def self.start_sender(argv)
-    require "pusher"
-
-    raise "No message supplied." if argv.length == 0
-
-    message = argv[0]
-    title   = argv[1]
-
-    Pusher.url = "http://#{ENV["PUSHER_KEY"]}:#{ENV["PUSHER_SECRET"]}@api.pusherapp.com/apps/#{ENV["PUSHER_APP_ID"]}"
-
-    Pusher[CHANNEL_NAME].trigger('notification', {
-      message: message,
-      title: title
-    })
+    NotifyPush::Sender.start(argv)
   end
 
+  # ----------------------------------------------
+  # ----------------------------------------------
+  # ----------------------------------------------
+  module Sender
+    def self.start(argv)
+      require "pusher"
+
+      raise "No message supplied." if argv.length == 0
+
+      message = argv[0]
+      title   = argv[1]
+
+      Pusher.url = "http://#{ENV["PUSHER_KEY"]}:#{ENV["PUSHER_SECRET"]}@api.pusherapp.com/apps/#{ENV["PUSHER_APP_ID"]}"
+
+      Pusher[CHANNEL_NAME].trigger('notification', {
+        message: message,
+        title: title
+      })
+
+      0
+    end
+  end
+
+  # ----------------------------------------------
+  # ----------------------------------------------
+  # ----------------------------------------------
   module Receiver
-    def self.start
+    def self.start(argv)
       require "pusher-client"
 
       options = { secure: true }
@@ -69,6 +93,8 @@ module NotifyPush
       end
 
       socket.connect
+
+      0
     end
   end
 end
