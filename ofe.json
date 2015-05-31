@@ -1,0 +1,18 @@
+{
+  "default": {
+    "extensions": [".rb", "*.gemspec", ".erb", ".scss", ".yml", ".js", ".css", ".feature", ".coffee", ".rake", ".ejs", ".eco", ".md"],
+    "files":      ["Gemfile", "Rakefile", "run", "bin/*", "ofe.json"],
+    "exclusions": ["test/", "spec/"],
+    "first_file": "Gemfile"
+  },
+  "docs": {
+    "extensions": [".md"],
+    "first_file": "README.md"
+  },
+  "git": {
+    "files": [".git/config", ".gitignore"]
+  },
+  "test": {
+    "files": ["test/**/*.rb", "spec/**/*.rb"]
+  }
+}
