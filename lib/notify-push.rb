@@ -58,49 +58,44 @@ module NotifyPush
       options = { secure: true }
       socket = PusherClient::Socket.new(ENV["PUSHER_KEY"], options)
 
-      # Subscribe to two channels
+      # Subscribe to main channel
       socket.subscribe(CHANNEL_NAME)
-      #socket.subscribe('channel2')
 
-      # Subscribe to presence channel
-      #socket.subscribe('presence-channel3', USER_ID)
-
-      # Subscribe to private channel
-      #socket.subscribe('private-channel4', USER_ID)
-
-      # Subscribe to presence channel with custom data (user_id is mandatory)
-      #socket.subscribe('presence-channel5', :user_id => USER_ID, :user_name => 'john')
-
-      # Bind to a global event (can occur on either channel1 or channel2)
-      #socket.bind('notification') do |data|
-      #end
-
-      # Bind to a channel event (can only occur on channel1)
+      # Bind to the main channel event 
       socket[CHANNEL_NAME].bind('notification') do |data|
-        data = JSON.parse(data)
 
-        message = data["message"]
-        title   = data["title"].nil? ? "notify-push" : data["title"]
-        subtitle   = data["subtitle"].nil? ? false : data["subtitle"]
+        begin
+          data = JSON.parse(data)
 
-        args = ["-title", title, "-message", message]
+          message = data["message"]
+          title   = data["title"].nil? ? "notify-push" : data["title"]
+          subtitle   = data["subtitle"].nil? ? false : data["subtitle"]
 
-        if subtitle
-          args.concat ["-subtitle", subtitle]
+          args = ["-title", title, "-message", message]
+
+          if subtitle
+            args.concat ["-subtitle", subtitle]
+          end
+
+          system "terminal-notifier", *args
+
+        rescue => exception
+          puts "Warning: Failed to process notification."
+          puts exception
+        ensure
+          puts data
+          puts "------"
         end
-
-        system "terminal-notifier", *args
-
-        puts data
-        puts "------"
       end
 
+      # Bind to the error event
       socket.bind("pusher:error") do |data|
         puts "Warning: Pusher Error"
         puts data
         upts "----"
       end
 
+      # Connect
       socket.connect
 
       0
