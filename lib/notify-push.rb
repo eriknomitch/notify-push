@@ -9,6 +9,9 @@ Dotenv.load
 # ------------------------------------------------
 module NotifyPush
 
+  # ----------------------------------------------
+  # ----------------------------------------------
+  # ----------------------------------------------
   CHANNEL_NAME = "notify-push"
   
   # ----------------------------------------------
@@ -23,7 +26,7 @@ module NotifyPush
   end
 
   # ----------------------------------------------
-  # ----------------------------------------------
+  # MODULE->SENDER -------------------------------
   # ----------------------------------------------
   module Sender
     def self.start(argv)
@@ -46,7 +49,7 @@ module NotifyPush
   end
 
   # ----------------------------------------------
-  # ----------------------------------------------
+  # MODULE->RECEIVER -----------------------------
   # ----------------------------------------------
   module Receiver
     def self.start(argv)
@@ -88,13 +91,21 @@ module NotifyPush
 
         system "terminal-notifier", *args
 
-        puts "------"
         puts data
+        puts "------"
+      end
+
+      socket.bind("pusher:error") do |data|
+        puts "Warning: Pusher Error"
+        puts data
+        upts "----"
       end
 
       socket.connect
 
       0
     end
+
+
   end
 end
