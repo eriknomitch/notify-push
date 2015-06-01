@@ -1,11 +1,8 @@
-require "dotenv"
 require "json"
 require "shellwords"
 require "yaml"
 require "recursive-open-struct"
 require "active_support/dependencies" # For mattr_accessor
-
-Dotenv.load
 
 # ------------------------------------------------
 # MODULE->NOTIFY-PUSH ----------------------------
@@ -28,9 +25,6 @@ module NotifyPush
   def self.initialize_configuration()
     begin
       self.configuration = RecursiveOpenStruct.new(YAML.load_file("#{ENV["HOME"]}/.notify-pushrc"))
-
-      puts self.configuration.pusher.app_id
-
     rescue => exception
       puts "fatal: Could not initialize configuration file."
       puts exception
@@ -62,7 +56,7 @@ module NotifyPush
       message = argv[0]
       title   = argv[1]
 
-      Pusher.url = "http://#{ENV["PUSHER_KEY"]}:#{ENV["PUSHER_SECRET"]}@api.pusherapp.com/apps/#{ENV["PUSHER_APP_ID"]}"
+      Pusher.url = "http://#{::NotifyPush.configuration.pusher.key}:#{::NotifyPush.configuration.pusher.secret}@api.pusherapp.com/apps/#{::NotifyPush.configuration.pusher.app_id}"
 
       Pusher[CHANNEL_NAME].trigger('notification', {
         message: message,
@@ -81,7 +75,7 @@ module NotifyPush
       require "pusher-client"
 
       options = { secure: true }
-      socket = PusherClient::Socket.new(ENV["PUSHER_KEY"], options)
+      socket = PusherClient::Socket.new(::NotifyPush.configuration.pusher.key, options)
 
       # Subscribe to main channel
       socket.subscribe(CHANNEL_NAME)

@@ -4,7 +4,6 @@ source "http://rubygems.org"
 #   gem "activesupport", ">= 2.3.5"
 gem "pusher"
 gem "pusher-client"
-gem "dotenv"
 gem "activesupport"
 gem "recursive-open-struct"
 
