@@ -63,6 +63,7 @@ GEM
     rake (10.4.2)
     rdoc (3.12.2)
       json (~> 1.4)
+    recursive-open-struct (0.6.4)
     shoulda (3.5.0)
       shoulda-context (~> 1.0, >= 1.0.1)
       shoulda-matchers (>= 1.4.1, < 3.0)
@@ -85,12 +86,14 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activesupport
   bundler (~> 1.0)
   dotenv
   jeweler (~> 2.0.1)
   pusher
   pusher-client
   rdoc (~> 3.12)
+  recursive-open-struct
   shoulda
   simplecov
   yard (~> 0.7)

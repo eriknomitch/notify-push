@@ -1,6 +1,9 @@
 require "dotenv"
 require "json"
 require "shellwords"
+require "yaml"
+require "recursive-open-struct"
+require "active_support/dependencies" # For mattr_accessor
 
 Dotenv.load
 
@@ -8,6 +11,11 @@ Dotenv.load
 # MODULE->NOTIFY-PUSH ----------------------------
 # ------------------------------------------------
 module NotifyPush
+  
+  # ----------------------------------------------
+  # ----------------------------------------------
+  # ----------------------------------------------
+  mattr_accessor :configuration
 
   # ----------------------------------------------
   # ----------------------------------------------
@@ -17,7 +25,24 @@ module NotifyPush
   # ----------------------------------------------
   # ----------------------------------------------
   # ----------------------------------------------
+  def self.initialize_configuration()
+    begin
+      self.configuration = RecursiveOpenStruct.new(YAML.load_file("#{ENV["HOME"]}/.notify-pushrc"))
+
+      puts self.configuration.pusher.app_id
+
+    rescue => exception
+      puts "fatal: Could not initialize configuration file."
+      puts exception
+    end
+  end
+  
+  # ----------------------------------------------
+  # ----------------------------------------------
+  # ----------------------------------------------
   def self.start(argv)
+    initialize_configuration
+
     if ["--receiver", "-r"].member? argv[0]
       return NotifyPush::Receiver.start(argv)
     end

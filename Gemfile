@@ -5,6 +5,8 @@ source "http://rubygems.org"
 gem "pusher"
 gem "pusher-client"
 gem "dotenv"
+gem "activesupport"
+gem "recursive-open-struct"
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
