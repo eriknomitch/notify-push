@@ -3,6 +3,7 @@ require "shellwords"
 require "yaml"
 require "recursive-open-struct"
 require "active_support/dependencies" # For mattr_accessor
+require 'active_support/core_ext/hash/reverse_merge'
 require 'daemons'
 
 #Daemons.daemonize
@@ -94,15 +95,17 @@ module NotifyPush
         begin
           data = JSON.parse(data)
 
-          message = data["message"]
-          title   = data["title"].nil? ? "notify-push" : data["title"]
+          #data.reverse_merge!({
+            #"title": "notify-push"
+          #})
+
+          message    = data["message"]
+          title      = data["title"].nil? ? "notify-push" : data["title"]
           subtitle   = data["subtitle"].nil? ? false : data["subtitle"]
 
           args = ["-title", title, "-message", message]
 
-          if subtitle
-            args.concat ["-subtitle", subtitle]
-          end
+          args.concat ["-subtitle", subtitle] if subtitle
 
           system "terminal-notifier", *args
 
@@ -110,16 +113,16 @@ module NotifyPush
           puts "Warning: Failed to process notification."
           puts exception
         ensure
+          puts "----------"
           puts data
-          puts "------"
         end
       end
 
       # Bind to the error event
       socket.bind("pusher:error") do |data|
+        puts "----------"
         puts "Warning: Pusher Error"
         puts data
-        upts "----"
       end
 
       # Connect
