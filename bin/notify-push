@@ -6,5 +6,5 @@ rescue LoadError
   require "notify-push"
 end
 
-exit NotifyPush.start(ARGV)
+exit NotifyPush.main(ARGV)
 

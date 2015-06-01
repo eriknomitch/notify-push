@@ -3,6 +3,9 @@ require "shellwords"
 require "yaml"
 require "recursive-open-struct"
 require "active_support/dependencies" # For mattr_accessor
+require 'daemons'
+
+#Daemons.daemonize
 
 # ------------------------------------------------
 # MODULE->NOTIFY-PUSH ----------------------------
@@ -18,30 +21,35 @@ module NotifyPush
   # ----------------------------------------------
   # ----------------------------------------------
   CHANNEL_NAME = "notify-push"
+  CONFIGURATION_FILE_PATH = "#{ENV["HOME"]}/.notify-pushrc"
   
   # ----------------------------------------------
   # ----------------------------------------------
   # ----------------------------------------------
   def self.initialize_configuration()
-    begin
-      self.configuration = RecursiveOpenStruct.new(YAML.load_file("#{ENV["HOME"]}/.notify-pushrc"))
-    rescue => exception
-      puts "fatal: Could not initialize configuration file."
-      puts exception
+    unless File.exist? CONFIGURATION_FILE_PATH
+      raise "Configuration file does not exist at '#{CONFIGURATION_FILE_PATH}'."
     end
+
+    self.configuration = RecursiveOpenStruct.new(YAML.load_file(CONFIGURATION_FILE_PATH))
   end
   
   # ----------------------------------------------
+  # MAIN -----------------------------------------
   # ----------------------------------------------
-  # ----------------------------------------------
-  def self.start(argv)
-    initialize_configuration
+  def self.main(argv)
+    begin
+      initialize_configuration
 
-    if ["--receiver", "-r"].member? argv[0]
-      return NotifyPush::Receiver.start(argv)
+      if ["--receiver", "-r"].member? argv[0]
+        return NotifyPush::Receiver.start(argv)
+      end
+
+      NotifyPush::Sender.start(argv)
+    rescue => exception
+      puts "fatal: #{exception.to_s}"
+      exit 1
     end
-
-    NotifyPush::Sender.start(argv)
   end
 
   # ----------------------------------------------

@@ -9,6 +9,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.3.8)
     builder (3.2.2)
+    daemons (1.2.2)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     docile (1.1.5)
@@ -87,6 +88,7 @@ PLATFORMS
 DEPENDENCIES
   activesupport
   bundler (~> 1.0)
+  daemons
   jeweler (~> 2.0.1)
   pusher
   pusher-client
