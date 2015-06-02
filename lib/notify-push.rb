@@ -80,17 +80,25 @@ module NotifyPush
   # MODULE->RECEIVER -----------------------------
   # ----------------------------------------------
   module Receiver
-    def self.start(argv)
-
+    def self.pid_lock
       require "pidfile"
 
-      # Lock the daemon's PID
       PidFile.new
+    end
+
+    def self.ensure_dependencies
+      system "command -v terminal-notifier >/dev/null 2>&1" or raise "'terminal-notifier' cannot be found."
+    end
+
+    def self.start(argv)
+      pid_lock
+      ensure_dependencies
 
       require "pusher-client"
 
-      options = { secure: true }
-      socket = PusherClient::Socket.new(::NotifyPush.configuration.pusher.key, options)
+      socket = PusherClient::Socket.new ::NotifyPush.configuration.pusher.key, {
+        secure: true
+      }
 
       # Subscribe to main channel
       socket.subscribe(CHANNEL_NAME)
