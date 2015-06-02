@@ -81,6 +81,12 @@ module NotifyPush
   # ----------------------------------------------
   module Receiver
     def self.start(argv)
+
+      require "pidfile"
+
+      # Lock the daemon's PID
+      PidFile.new
+
       require "pusher-client"
 
       options = { secure: true }
