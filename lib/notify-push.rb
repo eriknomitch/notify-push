@@ -5,9 +5,6 @@ require "recursive-open-struct"
 require "active_support/dependencies" # For mattr_accessor
 require 'active_support/core_ext/hash/reverse_merge'
 require 'active_support/core_ext/module'
-require 'daemons'
-
-#Daemons.daemonize
 
 # ------------------------------------------------
 # MODULE->NOTIFY-PUSH ----------------------------
@@ -15,18 +12,18 @@ require 'daemons'
 module NotifyPush
   
   # ----------------------------------------------
-  # ----------------------------------------------
+  # ATTRIBUTES -----------------------------------
   # ----------------------------------------------
   mattr_accessor :configuration
 
   # ----------------------------------------------
-  # ----------------------------------------------
+  # CONSTANTS ------------------------------------
   # ----------------------------------------------
   CHANNEL_NAME = "notify-push"
   CONFIGURATION_FILE_PATH = "#{ENV["HOME"]}/.notify-pushrc"
   
   # ----------------------------------------------
-  # ----------------------------------------------
+  # USER-CONFIGURATION ---------------------------
   # ----------------------------------------------
   def self.initialize_configuration()
     unless File.exist? CONFIGURATION_FILE_PATH
@@ -68,8 +65,6 @@ module NotifyPush
 
       raise "No message supplied." if ARGV.length == 0
 
-      puts ARGV
-
       Pusher.url = "http://#{configuration.pusher.key}:#{configuration.pusher.secret}@api.pusherapp.com/apps/#{configuration.pusher.app_id}"
 
       notification = {message: ARGV[0]}
@@ -91,12 +86,18 @@ module NotifyPush
       delegate :configuration, to: :parent
     end
 
+    # --------------------------------------------
+    # PID ----------------------------------------
+    # --------------------------------------------
     def self.pid_lock
       require "pidfile"
 
       PidFile.new
     end
 
+    # --------------------------------------------
+    # ENSURANCES ---------------------------------
+    # --------------------------------------------
     def self.ensure_dependencies
       system "command -v terminal-notifier >/dev/null 2>&1" or raise "'terminal-notifier' cannot be found."
     end
@@ -105,6 +106,9 @@ module NotifyPush
       `uname`.chomp("\n") == "Darwin" or "The notify-push receiver only supports OS X."
     end
 
+    # --------------------------------------------
+    # NOTIFY -------------------------------------
+    # --------------------------------------------
     def self.notify(title: "notify-push", subtitle: nil, message: " ")
 
       args = ["-title", title, "-message", message]
@@ -114,6 +118,9 @@ module NotifyPush
       system "terminal-notifier", *args
     end
 
+    # --------------------------------------------
+    # START --------------------------------------
+    # --------------------------------------------
     def self.start()
 
       ensure_compatibility

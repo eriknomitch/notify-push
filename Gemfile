@@ -6,7 +6,6 @@ gem "pusher"
 gem "pusher-client"
 gem "activesupport"
 gem "recursive-open-struct"
-gem "daemons"
 gem "pidfile"
 
 # Add dependencies to develop your gem here.
