@@ -4,6 +4,7 @@ require "yaml"
 require "recursive-open-struct"
 require "active_support/dependencies" # For mattr_accessor
 require 'active_support/core_ext/hash/reverse_merge'
+require 'active_support/core_ext/module'
 require 'daemons'
 
 #Daemons.daemonize
@@ -38,15 +39,15 @@ module NotifyPush
   # ----------------------------------------------
   # MAIN -----------------------------------------
   # ----------------------------------------------
-  def self.main(argv)
+  def self.main()
     begin
       initialize_configuration
 
-      if ["--receiver", "-r"].member? argv[0]
-        return NotifyPush::Receiver.start(argv)
+      if ["--receiver", "-r"].member? ARGV[0]
+        return NotifyPush::Receiver.start
       end
 
-      NotifyPush::Sender.start(argv)
+      NotifyPush::Sender.start
     rescue => exception
       puts "fatal: #{exception.to_s}"
       exit 1
@@ -57,16 +58,23 @@ module NotifyPush
   # MODULE->SENDER -------------------------------
   # ----------------------------------------------
   module Sender
-    def self.start(argv)
+
+    class << self
+      delegate :configuration, to: :parent
+    end
+
+    def self.start()
       require "pusher"
 
-      raise "No message supplied." if argv.length == 0
+      raise "No message supplied." if ARGV.length == 0
 
-      Pusher.url = "http://#{::NotifyPush.configuration.pusher.key}:#{::NotifyPush.configuration.pusher.secret}@api.pusherapp.com/apps/#{::NotifyPush.configuration.pusher.app_id}"
+      puts ARGV
 
-      notification = {message: argv[0]}
+      Pusher.url = "http://#{configuration.pusher.key}:#{configuration.pusher.secret}@api.pusherapp.com/apps/#{configuration.pusher.app_id}"
 
-      notification[:title] = argv[1] if argv[1]
+      notification = {message: ARGV[0]}
+
+      notification[:title] = ARGV[1] if ARGV[1]
       
       Pusher[CHANNEL_NAME].trigger("notification", notification)
 
@@ -78,6 +86,11 @@ module NotifyPush
   # MODULE->RECEIVER -----------------------------
   # ----------------------------------------------
   module Receiver
+
+    class << self
+      delegate :configuration, to: :parent
+    end
+
     def self.pid_lock
       require "pidfile"
 
@@ -101,7 +114,7 @@ module NotifyPush
       system "terminal-notifier", *args
     end
 
-    def self.start(argv)
+    def self.start()
 
       ensure_compatibility
       ensure_dependencies
@@ -109,7 +122,7 @@ module NotifyPush
 
       require "pusher-client"
 
-      socket = PusherClient::Socket.new ::NotifyPush.configuration.pusher.key, {
+      socket = PusherClient::Socket.new configuration.pusher.key, {
         secure: true
       }
 
