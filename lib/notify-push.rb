@@ -62,15 +62,13 @@ module NotifyPush
 
       raise "No message supplied." if argv.length == 0
 
-      message = argv[0]
-      title   = argv[1]
-
       Pusher.url = "http://#{::NotifyPush.configuration.pusher.key}:#{::NotifyPush.configuration.pusher.secret}@api.pusherapp.com/apps/#{::NotifyPush.configuration.pusher.app_id}"
 
-      Pusher[CHANNEL_NAME].trigger('notification', {
-        message: message,
-        title: title
-      })
+      notification = {message: argv[0]}
+
+      notification[:title] = argv[1] if argv[1]
+      
+      Pusher[CHANNEL_NAME].trigger("notification", notification)
 
       0
     end
@@ -94,6 +92,15 @@ module NotifyPush
       `uname`.chomp("\n") == "Darwin" or "The notify-push receiver only supports OS X."
     end
 
+    def self.notify(title: "notify-push", subtitle: nil, message: " ")
+
+      args = ["-title", title, "-message", message]
+
+      args.concat ["-subtitle", subtitle] if subtitle
+
+      system "terminal-notifier", *args
+    end
+
     def self.start(argv)
 
       ensure_compatibility
@@ -113,21 +120,9 @@ module NotifyPush
       socket[CHANNEL_NAME].bind('notification') do |data|
 
         begin
-          data = JSON.parse(data)
-
-          #data.reverse_merge!({
-            #"title": "notify-push"
-          #})
-
-          message    = data["message"]
-          title      = data["title"].nil? ? "notify-push" : data["title"]
-          subtitle   = data["subtitle"].nil? ? false : data["subtitle"]
-
-          args = ["-title", title, "-message", message]
-
-          args.concat ["-subtitle", subtitle] if subtitle
-
-          system "terminal-notifier", *args
+          data = JSON.parse(data, symbolize_names: true)
+          
+          notify **data
 
         rescue => exception
           puts "Warning: Failed to process notification."
