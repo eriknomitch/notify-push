@@ -90,9 +90,15 @@ module NotifyPush
       system "command -v terminal-notifier >/dev/null 2>&1" or raise "'terminal-notifier' cannot be found."
     end
 
+    def self.ensure_compatibility
+      `uname`.chomp("\n") == "Darwin" or "The notify-push receiver only supports OS X."
+    end
+
     def self.start(argv)
-      pid_lock
+
+      ensure_compatibility
       ensure_dependencies
+      pid_lock
 
       require "pusher-client"
 
