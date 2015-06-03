@@ -2,9 +2,8 @@ require "json"
 require "shellwords"
 require "yaml"
 require "recursive-open-struct"
-require "active_support/dependencies" # For mattr_accessor
-require 'active_support/core_ext/hash/reverse_merge'
-require 'active_support/core_ext/module'
+require "active_support/core_ext/hash/reverse_merge"
+require "active_support/core_ext/module"
 
 # ------------------------------------------------
 # MODULE->NOTIFY-PUSH ----------------------------
@@ -19,7 +18,7 @@ module NotifyPush
   # ----------------------------------------------
   # CONSTANTS ------------------------------------
   # ----------------------------------------------
-  CHANNEL_NAME = "notify-push"
+  CHANNEL_NAME            = "notify-push"
   CONFIGURATION_FILE_PATH = "#{ENV["HOME"]}/.notify-pushrc"
   
   # ----------------------------------------------
@@ -165,7 +164,6 @@ module NotifyPush
 
       0
     end
-
 
   end
 end
