@@ -2,8 +2,10 @@ require "json"
 require "shellwords"
 require "yaml"
 require "recursive-open-struct"
+
 require "active_support/core_ext/hash/reverse_merge"
 require "active_support/core_ext/module"
+require "active_support/core_ext/object/blank"
 
 # ------------------------------------------------
 # MODULE->NOTIFY-PUSH ----------------------------
@@ -62,18 +64,28 @@ module NotifyPush
     def self.start()
       require "pusher"
 
-      raise "No message supplied." if ARGV.length == 0
+      # The only thing we require is a message.
+      # The others will be nil if not supplied.
+      raise "No message supplied." if ARGV[0].blank?
 
+      notification = {
+        message:  ARGV[0],
+        title:    ARGV[1],
+        subtitle: ARGV[2]
+      }
+
+      # Strip the nil key/value pairs out so we don't have to 
+      # worry about them on the Receiver end.
+      notification.delete_if {|key, value| value.blank?}
+
+      # Connect to Pusher and trigger the notification
       Pusher.url = "http://#{configuration.pusher.key}:#{configuration.pusher.secret}@api.pusherapp.com/apps/#{configuration.pusher.app_id}"
 
-      notification = {message: ARGV[0]}
-
-      notification[:title] = ARGV[1] if ARGV[1]
-      
       Pusher[CHANNEL_NAME].trigger("notification", notification)
 
       0
     end
+
   end
 
   # ----------------------------------------------
@@ -108,11 +120,14 @@ module NotifyPush
     # --------------------------------------------
     # NOTIFY -------------------------------------
     # --------------------------------------------
-    def self.notify(title: "notify-push", subtitle: nil, message: " ")
+    def self.notify(title: "notify-push", subtitle: nil, message:)
 
-      args = ["-title", title, "-message", message]
+      args = [
+        "-message", message,
+        "-title",   title
+      ]
 
-      args.concat ["-subtitle", subtitle] if subtitle
+      args.concat ["-subtitle", subtitle] unless subtitle.blank?
 
       system "terminal-notifier", *args
     end
