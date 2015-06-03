@@ -136,7 +136,7 @@ module NotifyPush
       socket.subscribe(CHANNEL_NAME)
 
       # Bind to the main channel event 
-      socket[CHANNEL_NAME].bind('notification') do |data|
+      socket[CHANNEL_NAME].bind("notification") do |data|
 
         begin
           data = JSON.parse(data, symbolize_names: true)
@@ -172,6 +172,6 @@ end
 # TRAP->SIGINT -----------------------------------
 # ------------------------------------------------
 trap "SIGINT" do
-  puts "Exiting"
+  puts "Exiting."
   exit 130
 end
