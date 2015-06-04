@@ -22,6 +22,14 @@ Jeweler::Tasks.new do |gem|
   gem.email = "erik@nomitch.com"
   gem.authors = ["Erik Nomitch"]
   gem.licenses = ["GPL-2"]
+  gem.post_install_message = <<-EOS
+---------------------------------------------------------------
+You may need to create a configuration file at ~/.notify-pushrc
+
+See the example at https://github.com/eriknomitch/notify-push
+---------------------------------------------------------------
+  EOS
+
   #s.files = `git ls-files`.split("\n")
   # dependencies defined in Gemfile
 end
