@@ -2,6 +2,7 @@ require "json"
 require "shellwords"
 require "yaml"
 require "recursive-open-struct"
+require "os"
 
 require "active_support/core_ext/hash/reverse_merge"
 require "active_support/core_ext/module"
@@ -114,7 +115,7 @@ module NotifyPush
     end
 
     def self.ensure_compatibility
-      `uname`.chomp("\n") == "Darwin" or "The notify-push receiver only supports OS X."
+      OS.mac? or "The notify-push receiver only supports OS X."
     end
 
     # --------------------------------------------
