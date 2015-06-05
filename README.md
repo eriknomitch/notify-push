@@ -4,12 +4,15 @@ A general purpose popup notifier sender/receiver for using WebSockets (via [Push
 ## Overview
 `notify-push` employs a Receiver (*currently OS X only*) and Sender(s) to push messages from the Sender(s) to the Receiver.
 
+
+![IRC Example](images/terminal-notifier.png "IRC Example")
+
 **Example Use Case**:
 You have `irssi` set up in a `screen` on a remote machine and you want to be notified on your laptop/desktop whenever your name gets highlighted.
 
 ## Disclaimer
 
-![alt text](http://serve.eriknomitch.com/images/works-on-my-machine.jpg "Works on My Machine")
+![Works on my Machine](http://serve.eriknomitch.com/images/works-on-my-machine.jpg "Works on my Machine")
 
 ## Installation
 
