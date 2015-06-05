@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# FIX: Unfinished
+
+key=$PUSHER_KEY
+secret=$PUSHER_SECRET
+appID=$PUSHER_APP_ID
+
+message=$1
+title=$2
+timestamp=$(date +%s)
+
+data='{"name":"notification","channel":"notify-push","data":"{\"message\":\"'$message'\",\"title\":\"'$title'\"}"}'
+
+# Be sure to use `printf %s` to prevent a trailing \n from being added to the data.
+md5data=$(printf '%s' "$data" | md5sum | awk '{print $1}')
+path="/apps/${appID}/events"
+queryString="auth_key=${key}&auth_timestamp=${timestamp}&auth_version=1.0&body_md5=${md5data}"
+
+# Be sure to use a multi-line, double quoted string that doesn't end in \n as 
+# input for the SHA-256 HMAC.
+authSig=$(printf '%s' "POST
+$path
+$queryString" | openssl dgst -sha256 -hex -hmac "$secret")
+curl -s -H "Content-Type:application/json" -d "$data" "http://api.pusherapp.com${path}?${queryString}&auth_signature=${authSig}" > /dev/null 2>&1 &
+
