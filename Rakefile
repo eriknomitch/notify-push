@@ -24,9 +24,21 @@ Jeweler::Tasks.new do |gem|
   gem.licenses = ["GPL-2"]
   gem.post_install_message = <<-EOS
 ---------------------------------------------------------------
-You may need to create a configuration file at ~/.notify-pushrc
+If you have not done so, you will need to create a configuration file at:
 
-See the example at https://github.com/eriknomitch/notify-push
+~/.notify-pushrc
+
+See the instructions/example at:
+
+https://github.com/eriknomitch/notify-push#create--distribute-configuration-file
+
+Or, modify this example.  It's pretty straightforward:
+
+pusher:
+  key: a1a2a3b1b2b3c1c2c3d1
+  secret: a1a2a3b1b2b3c1c3c1d1
+  app_id: 12345
+
 ---------------------------------------------------------------
   EOS
 

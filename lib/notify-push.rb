@@ -63,18 +63,27 @@ module NotifyPush
     end
 
     def self.start()
-      require "pusher"
 
       # The only thing we require is a message.
       # The others will be nil if not supplied.
       raise "No message supplied." if ARGV[0].blank?
-
+      
       notification = {
         message:  ARGV[0],
         title:    ARGV[1],
         subtitle: ARGV[2]
       }
 
+      puts "Sending notification (backgrounded) with data:"
+      puts "  message-> #{notification[:message]}"
+      puts "    title-> #{notification[:title]}"
+      puts " subtitle-> #{notification[:subtitle]}"
+     
+      # Daemonize now.
+      Process.daemon true
+      
+      require "pusher"
+      
       # Strip the nil key/value pairs out so we don't have to 
       # worry about them on the Receiver end.
       notification.delete_if {|key, value| value.blank?}
@@ -143,6 +152,7 @@ module NotifyPush
       pid_lock
 
       require "pusher-client"
+
 
       socket = PusherClient::Socket.new configuration.pusher.key, {
         secure: true
