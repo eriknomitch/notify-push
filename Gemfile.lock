@@ -9,6 +9,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.3.8)
     builder (3.2.2)
+    coderay (1.1.0)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     docile (1.1.5)
@@ -38,6 +39,7 @@ GEM
       rdoc
     json (1.8.2)
     jwt (1.5.0)
+    method_source (0.8.2)
     mini_portile (0.6.2)
     minitest (5.7.0)
     multi_json (1.11.0)
@@ -45,6 +47,7 @@ GEM
     multipart-post (2.0.0)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
+    notifier (0.5.1)
     oauth2 (1.0.0)
       faraday (>= 0.8, < 0.10)
       jwt (~> 1.0)
@@ -53,6 +56,10 @@ GEM
       rack (~> 1.2)
     os (0.9.6)
     pidfile (0.3.0)
+    pry (0.10.1)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
     pusher (0.14.5)
       httpclient (~> 2.5)
       multi_json (~> 1.0)
@@ -77,6 +84,7 @@ GEM
       json (~> 1.8)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.0)
+    slop (3.6.0)
     thread_safe (0.3.5)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
@@ -90,8 +98,10 @@ DEPENDENCIES
   activesupport
   bundler (~> 1.0)
   jeweler (~> 2.0.1)
+  notifier
   os
   pidfile
+  pry
   pusher
   pusher-client
   rdoc (~> 3.12)
