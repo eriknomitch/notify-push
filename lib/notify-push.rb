@@ -3,15 +3,39 @@ require "shellwords"
 require "yaml"
 require "recursive-open-struct"
 require "os"
+require "notifier"
+
+require "pry"
 
 require "active_support/core_ext/hash/reverse_merge"
 require "active_support/core_ext/module"
 require "active_support/core_ext/object/blank"
 
 # ------------------------------------------------
+# ->CLASS->OS ------------------------------------
+# ------------------------------------------------
+class OS
+  def self.host_simple
+    # FIX: Add more.
+    %i(mac linux windows).each do |os|
+      return os if OS.send("#{os}?")
+    end or raise "Cannot detect OS."
+  end
+end
+
+# ------------------------------------------------
 # MODULE->NOTIFY-PUSH ----------------------------
 # ------------------------------------------------
 module NotifyPush
+
+  # ----------------------------------------------
+  # MODULE->UTILITY ------------------------------
+  # ----------------------------------------------
+  module Utility
+    def self.require_system_command_or_raise(command)
+      system "command -v #{command} >/dev/null 2>&1" or raise "The command '#{command}' cannot be found and is required."
+    end
+  end
   
   # ----------------------------------------------
   # ATTRIBUTES -----------------------------------
@@ -117,29 +141,16 @@ module NotifyPush
     end
 
     # --------------------------------------------
-    # ENSURANCES ---------------------------------
-    # --------------------------------------------
-    def self.ensure_dependencies
-      system "command -v terminal-notifier >/dev/null 2>&1" or raise "'terminal-notifier' cannot be found."
-    end
-
-    def self.ensure_compatibility
-      OS.mac? or "The notify-push receiver only supports OS X."
-    end
-
-    # --------------------------------------------
     # NOTIFY -------------------------------------
     # --------------------------------------------
     def self.notify(title: "notify-push", subtitle: nil, message:)
 
-      args = [
-        "-message", message,
-        "-title",   title
-      ]
+      message = "#{subtitle} - #{message}" if subtitle
 
-      args.concat ["-subtitle", subtitle] unless subtitle.blank?
-
-      system "terminal-notifier", *args
+      Notifier.notify({
+        title:   title,
+        message: message
+      })
     end
 
     # --------------------------------------------
@@ -147,12 +158,9 @@ module NotifyPush
     # --------------------------------------------
     def self.start()
 
-      ensure_compatibility
-      ensure_dependencies
       pid_lock
 
       require "pusher-client"
-
 
       socket = PusherClient::Socket.new configuration.pusher.key, {
         secure: true
