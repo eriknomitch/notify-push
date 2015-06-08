@@ -3,26 +3,12 @@
 # ================================================
 source "http://rubygems.org"
 
-# http://stackoverflow.com/questions/8420414/how-to-add-mac-specific-gems-to-bundle-on-mac-but-not-on-linux
-def windows_only(require_as)
-  RbConfig::CONFIG['host_os'] =~ /mingw|mswin/i ? require_as : false
-end
-
-def linux_only(require_as)
-  RbConfig::CONFIG['host_os'] =~ /linux/ ? require_as : false
-end
-
-def darwin_only(require_as)
-  RbConfig::CONFIG['host_os'] =~ /darwin/ ? require_as : false
-end
-
 gem "pusher"
 gem "pusher-client"
 gem "activesupport"
 gem "recursive-open-struct"
 gem "pidfile"
 gem "os"
-#gem "terminal-notifier", require: darwin_only("terminal-notifier")
 gem "notifier"
 
 group :development do
