@@ -1,26 +1,38 @@
 #!/bin/bash
 
-# FIX: Unfinished
+_envs_passed=0
 
-key=$PUSHER_KEY
-secret=$PUSHER_SECRET
-appID=$PUSHER_APP_ID
+function _require_environment_variable() {
+  [ -z "${!1}" ] && echo "Need to set $1 environment variable." && _env_passed=1 && return 1
+  return 0
+}
+
+_require_environment_variable "PUSHER_KEY"
+_require_environment_variable "PUSHER_SECRET"
+_require_environment_variable "PUSHER_APP_ID"
+
+if (( $_env_passed != 0 )) ; then
+  echo "fatal: One or more environment variables are not set."
+  exit 1
+fi
 
 message=$1
 title=$2
 timestamp=$(date +%s)
 
+[ -z "$message" ] && echo "fatal: No message supplied." && exit 1
+
 data='{"name":"notification","channel":"notify-push","data":"{\"message\":\"'$message'\",\"title\":\"'$title'\"}"}'
 
 # Be sure to use `printf %s` to prevent a trailing \n from being added to the data.
 md5data=$(printf '%s' "$data" | md5sum | awk '{print $1}')
-path="/apps/${appID}/events"
-queryString="auth_key=${key}&auth_timestamp=${timestamp}&auth_version=1.0&body_md5=${md5data}"
+path="/apps/${$PUSHER_APP_ID}/events"
+queryString="auth_key=${$PUSHER_KEY}&auth_timestamp=${timestamp}&auth_version=1.0&body_md5=${md5data}"
 
 # Be sure to use a multi-line, double quoted string that doesn't end in \n as 
 # input for the SHA-256 HMAC.
 authSig=$(printf '%s' "POST
 $path
-$queryString" | openssl dgst -sha256 -hex -hmac "$secret")
+$queryString" | openssl dgst -sha256 -hex -hmac "$PUSHER_SECRET")
 curl -s -H "Content-Type:application/json" -d "$data" "http://api.pusherapp.com${path}?${queryString}&auth_signature=${authSig}" > /dev/null 2>&1 &
 
