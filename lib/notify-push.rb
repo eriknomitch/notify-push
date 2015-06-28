@@ -10,6 +10,7 @@ require "pry"
 require "active_support/core_ext/hash/reverse_merge"
 require "active_support/core_ext/module"
 require "active_support/core_ext/object/blank"
+require "active_support/core_ext/object/try"
 
 # ------------------------------------------------
 # ->CLASS->OS ------------------------------------
@@ -47,6 +48,18 @@ module NotifyPush
   # ----------------------------------------------
   CHANNEL_NAME            = "notify-push"
   CONFIGURATION_FILE_PATH = "#{ENV["HOME"]}/.notify-pushrc"
+
+  # ----------------------------------------------
+  # ACTING-AS ------------------------------------
+  # ----------------------------------------------
+  def self.acting_as_module
+    case self.acting_as
+    when :receiver
+      return ::NotifyPush::Receiver
+    when :sender
+      return::NotifyPush::Sender
+    end
+  end
   
   # ----------------------------------------------
   # USER-CONFIGURATION ---------------------------
@@ -62,12 +75,8 @@ module NotifyPush
   # ----------------------------------------------
   # CALLBACKS ------------------------------------
   # ----------------------------------------------
-  def self.on_exit
-    case self.acting_as
-    when :receiver
-      NotifyPush::Receiver.notify_exiting
-    end
-  
+  def self.on_at_exit
+    self.acting_as_module.try(:on_at_exit)
     puts "Exiting."
   end
   
@@ -145,6 +154,10 @@ module NotifyPush
       delegate :configuration, to: :parent
     end
 
+    def self.on_at_exit
+      notify title: "notify-push", message: "Receiver: Exiting."
+    end
+
     # --------------------------------------------
     # PID ----------------------------------------
     # --------------------------------------------
@@ -167,10 +180,6 @@ module NotifyPush
       })
     end
   
-    def self.notify_exiting
-      notify title: "notify-push", message: "Receiver: Exiting."
-    end
-
     # --------------------------------------------
     # START --------------------------------------
     # --------------------------------------------
@@ -236,11 +245,18 @@ module NotifyPush
 end
 
 # ------------------------------------------------
+# TRAP->ANY-EXIT ---------------------------------
+# ------------------------------------------------
+at_exit { NotifyPush.on_at_exit }
+
+# ------------------------------------------------
 # TRAP->SIGINT -----------------------------------
 # ------------------------------------------------
 trap "SIGINT" do
-
-  NotifyPush.on_exit
-
   exit 130
 end
+
+trap "KILL" do
+  exit 143
+end
+
