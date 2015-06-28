@@ -187,9 +187,11 @@ module NotifyPush
       }
 
       # Subscribe to main channel
+      # ------------------------------------------
       socket.subscribe(CHANNEL_NAME)
 
-      # Bind to the main channel event 
+      # Bind to: Main Channel Notification
+      # ------------------------------------------
       socket[CHANNEL_NAME].bind("notification") do |data|
 
         begin
@@ -206,14 +208,16 @@ module NotifyPush
         end
       end
 
-      # Bind to: Errors
+      # Bind to: Pusher Errors
+      # ------------------------------------------
       socket.bind("pusher:error") do |data|
         puts "----------"
         puts "Warning: Pusher Error"
         puts data
       end
      
-      # Bind to: Connection Established
+      # Bind to: Pusher Connection Established
+      # ------------------------------------------
       socket.bind("pusher:connection_established") do |data|
         Notifier.notify({
           title:   "notify-push",
@@ -221,7 +225,8 @@ module NotifyPush
         })
       end
 
-      # Connect
+      # Connect the Socket
+      # ------------------------------------------
       socket.connect
 
       0
