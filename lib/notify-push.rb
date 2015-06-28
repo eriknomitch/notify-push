@@ -11,6 +11,12 @@ require "active_support/core_ext/hash/reverse_merge"
 require "active_support/core_ext/module"
 require "active_support/core_ext/object/blank"
 require "active_support/core_ext/object/try"
+require "active_support/inflector/inflections"
+
+# ------------------------------------------------
+# TRAP->ANY-EXIT ---------------------------------
+# ------------------------------------------------
+at_exit { NotifyPush.on_at_exit }
 
 # ------------------------------------------------
 # ->CLASS->OS ------------------------------------
@@ -50,18 +56,6 @@ module NotifyPush
   CONFIGURATION_FILE_PATH = "#{ENV["HOME"]}/.notify-pushrc"
 
   # ----------------------------------------------
-  # ACTING-AS ------------------------------------
-  # ----------------------------------------------
-  def self.acting_as_module
-    case self.acting_as
-    when :receiver
-      return ::NotifyPush::Receiver
-    when :sender
-      return::NotifyPush::Sender
-    end
-  end
-  
-  # ----------------------------------------------
   # USER-CONFIGURATION ---------------------------
   # ----------------------------------------------
   def self.initialize_configuration()
@@ -76,7 +70,7 @@ module NotifyPush
   # CALLBACKS ------------------------------------
   # ----------------------------------------------
   def self.on_at_exit
-    self.acting_as_module.try(:on_at_exit)
+    self.acting_as.try(:on_at_exit)
     puts "Exiting."
   end
   
@@ -113,7 +107,8 @@ module NotifyPush
       # The others will be nil if not supplied.
       raise "No message supplied." if ARGV[0].blank?
       
-      ::NotifyPush.acting_as = :sender
+      ::NotifyPush.acting_as = self
+
       
       notification = {
         message:  ARGV[0],
@@ -187,7 +182,7 @@ module NotifyPush
 
       pid_lock
 
-      ::NotifyPush.acting_as = :receiver
+      ::NotifyPush.acting_as = self
 
       require "pusher-client"
 
@@ -242,21 +237,5 @@ module NotifyPush
     end
 
   end
-end
-
-# ------------------------------------------------
-# TRAP->ANY-EXIT ---------------------------------
-# ------------------------------------------------
-at_exit { NotifyPush.on_at_exit }
-
-# ------------------------------------------------
-# TRAP->SIGINT -----------------------------------
-# ------------------------------------------------
-trap "SIGINT" do
-  exit 130
-end
-
-trap "KILL" do
-  exit 143
 end
 
