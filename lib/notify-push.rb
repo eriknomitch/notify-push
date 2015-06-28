@@ -7,7 +7,7 @@ require "notifier"
 require "thor"
 
 # FIX: Development only
-require "pry"
+require "pry" if Gem::Specification::find_all_by_name("pry").any?
 
 require "active_support/core_ext/hash/reverse_merge"
 require "active_support/core_ext/module"
