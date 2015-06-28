@@ -27,6 +27,11 @@ end
 # MODULE->NOTIFY-PUSH ----------------------------
 # ------------------------------------------------
 module NotifyPush
+ 
+  # ----------------------------------------------
+  # ATTRIBUTES -----------------------------------
+  # ----------------------------------------------
+  mattr_accessor :configuration, :acting_as
 
   # ----------------------------------------------
   # MODULE->UTILITY ------------------------------
@@ -36,11 +41,6 @@ module NotifyPush
       system "command -v #{command} >/dev/null 2>&1" or raise "The command '#{command}' cannot be found and is required."
     end
   end
-  
-  # ----------------------------------------------
-  # ATTRIBUTES -----------------------------------
-  # ----------------------------------------------
-  mattr_accessor :configuration
 
   # ----------------------------------------------
   # CONSTANTS ------------------------------------
@@ -57,6 +57,18 @@ module NotifyPush
     end
 
     self.configuration = RecursiveOpenStruct.new(YAML.load_file(CONFIGURATION_FILE_PATH))
+  end
+  
+  # ----------------------------------------------
+  # CALLBACKS ------------------------------------
+  # ----------------------------------------------
+  def self.on_exit
+    case self.acting_as
+    when :receiver
+      NotifyPush::Receiver.notify_exiting
+    end
+  
+    puts "Exiting."
   end
   
   # ----------------------------------------------
@@ -91,6 +103,8 @@ module NotifyPush
       # The only thing we require is a message.
       # The others will be nil if not supplied.
       raise "No message supplied." if ARGV[0].blank?
+      
+      ::NotifyPush.acting_as = :sender
       
       notification = {
         message:  ARGV[0],
@@ -152,6 +166,10 @@ module NotifyPush
         message: message
       })
     end
+  
+    def self.notify_exiting
+      notify title: "notify-push", message: "Receiver: Exiting."
+    end
 
     # --------------------------------------------
     # START --------------------------------------
@@ -159,6 +177,8 @@ module NotifyPush
     def self.start()
 
       pid_lock
+
+      ::NotifyPush.acting_as = :receiver
 
       require "pusher-client"
 
@@ -197,7 +217,7 @@ module NotifyPush
       socket.bind("pusher:connection_established") do |data|
         Notifier.notify({
           title:   "notify-push",
-          message: "Receiver started & connected."
+          message: "Receiver: Started & connected."
         })
       end
 
@@ -214,6 +234,8 @@ end
 # TRAP->SIGINT -----------------------------------
 # ------------------------------------------------
 trap "SIGINT" do
-  puts "Exiting."
+
+  NotifyPush.on_exit
+
   exit 130
 end
