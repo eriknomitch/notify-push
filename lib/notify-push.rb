@@ -5,6 +5,7 @@ require "recursive-open-struct"
 require "os"
 require "notifier"
 
+# FIX: Development only
 require "pry"
 
 require "active_support/core_ext/hash/reverse_merge"
