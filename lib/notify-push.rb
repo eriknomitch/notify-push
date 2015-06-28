@@ -186,11 +186,19 @@ module NotifyPush
         end
       end
 
-      # Bind to the error event
+      # Bind to: Errors
       socket.bind("pusher:error") do |data|
         puts "----------"
         puts "Warning: Pusher Error"
         puts data
+      end
+     
+      # Bind to: Connection Established
+      socket.bind("pusher:connection_established") do |data|
+        Notifier.notify({
+          title:   "notify-push",
+          message: "Receiver started & connected."
+        })
       end
 
       # Connect
