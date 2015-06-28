@@ -4,6 +4,7 @@ require "yaml"
 require "recursive-open-struct"
 require "os"
 require "notifier"
+require "thor"
 
 # FIX: Development only
 require "pry"
@@ -78,15 +79,17 @@ module NotifyPush
   # ----------------------------------------------
   # MAIN -----------------------------------------
   # ----------------------------------------------
-  def self.main()
+  def self.main(type, *args)
     begin
       initialize_configuration
 
-      if ["--receiver", "-r"].member? ARGV[0]
-        return NotifyPush::Receiver.start
+      case type
+      when :receiver, :receive
+        return NotifyPush::Receiver.start *args
+      when :sender, :send
+        return NotifyPush::Sender.start *args
       end
 
-      NotifyPush::Sender.start
     rescue => exception
       puts "fatal: #{exception.to_s}"
       exit 1
@@ -104,12 +107,13 @@ module NotifyPush
 
     def self.start()
 
+      ARGV.shift
+
       # The only thing we require is a message.
       # The others will be nil if not supplied.
       raise "No message supplied." if ARGV[0].blank?
       
       ::NotifyPush.acting_as = self
-
       
       notification = {
         message:  ARGV[0],
@@ -239,4 +243,25 @@ module NotifyPush
 
   end
 end
+
+# ------------------------------------------------
+# CLASS->CLI (THOR) ------------------------------
+# ------------------------------------------------
+class CLI < Thor
+
+  desc "receive", "Starts the Receiver daemon."
+  def receive()
+    NotifyPush.main :receive
+  end
+
+  desc "send TITLE MESSAGE", "say receive to NAME"
+  def send(title="", message="")
+    NotifyPush.main :send
+  end
+end
+
+# ------------------------------------------------
+# MAIN -------------------------------------------
+# ------------------------------------------------
+CLI.start(ARGV)
 
