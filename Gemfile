@@ -10,6 +10,7 @@ gem "recursive-open-struct"
 gem "pidfile"
 gem "os"
 gem "notifier"
+gem "thor"
 
 group :development do
   gem "shoulda", ">= 0"
