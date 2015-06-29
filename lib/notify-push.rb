@@ -36,6 +36,12 @@ end
 # MODULE->NOTIFY-PUSH ----------------------------
 # ------------------------------------------------
 module NotifyPush
+  
+  # ----------------------------------------------
+  # CONSTANTS ------------------------------------
+  # ----------------------------------------------
+  CHANNEL_NAME            = "notify-push"
+  CONFIGURATION_FILE_PATH = "#{ENV["HOME"]}/.notify-pushrc"
  
   # ----------------------------------------------
   # ATTRIBUTES -----------------------------------
@@ -50,12 +56,6 @@ module NotifyPush
       system "command -v #{command} >/dev/null 2>&1" or raise "The command '#{command}' cannot be found and is required."
     end
   end
-
-  # ----------------------------------------------
-  # CONSTANTS ------------------------------------
-  # ----------------------------------------------
-  CHANNEL_NAME            = "notify-push"
-  CONFIGURATION_FILE_PATH = "#{ENV["HOME"]}/.notify-pushrc"
 
   # ----------------------------------------------
   # USER-CONFIGURATION ---------------------------
