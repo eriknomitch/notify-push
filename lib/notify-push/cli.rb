@@ -13,11 +13,22 @@ module NotifyPush
       NotifyPush.main :receive
     end
 
-    desc "send TITLE MESSAGE", "say receive to NAME"
-    def send(title="", message="")
+    desc "send MESSAGE <TITLE>", "say receive to NAME"
+    def send(message, title="notify-push")
 
       # FIX: Use these arguments instead of ARGV
       NotifyPush.main :send
     end
-  end
+    
+    #desc "install COMPONENT", "Installs a notify-push component. Available COMPONENTs: receiver-daemon"
+    #def install(component)
+      #puts "installing..."
+    #end
+    
+    #desc "uninstall COMPONENT", "say receive to NAME"
+    #def uninstall(component)
+      #puts "installing..."
+    #end
+  #end
+
 end
