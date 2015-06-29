@@ -256,6 +256,8 @@ class CLI < Thor
 
   desc "send TITLE MESSAGE", "say receive to NAME"
   def send(title="", message="")
+
+    # FIX: Use these arguments instead of ARGV
     NotifyPush.main :send
   end
 end
