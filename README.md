@@ -45,7 +45,7 @@ pusher:
 Invoke the Receiver with:
 
 ```Shell
-$ notify-push --receiver # or -r
+$ notify-push receive
 ```
 
 TODO: There's a .plist launchd file in there but it's not ready.
@@ -55,13 +55,12 @@ TODO: There's a .plist launchd file in there but it's not ready.
 ### Usage
 
 ```Shell
-$ notify-push <message> [title] [subtitle]
+$ notify-push send <message> [title]
 ```
 
 Alternatively, you can `curl` or use any Pusher tool to send on messages to your `notify-push` app on channel `"notifications"` with data:
 
 ```
-message:  The message to notify you with in the notifier popup (REQUIRED)
-title:    The title of the notifier popup (Optional)
-subtitle: The subtitle of the notifier popup (Optional)
+message: The message to notify you with in the notifier popup (REQUIRED)
+title:   The title of the notifier popup (Optional)
 ```
