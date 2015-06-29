@@ -9,6 +9,7 @@ module NotifyPush
   class CLI < Thor
 
     desc "receive", "Starts the Receiver daemon."
+    option :silence_events, type: :boolean, default: false
     def receive()
       NotifyPush.main :receive
     end
