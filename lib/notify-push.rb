@@ -87,7 +87,7 @@ module NotifyPush
       when :receiver, :receive
         return NotifyPush::Receiver.start *args
       when :sender, :send
-        return NotifyPush::Sender.start *args
+        return NotifyPush::Sender.send_notification *args
       end
 
     rescue => exception
@@ -105,7 +105,7 @@ module NotifyPush
       delegate :configuration, to: :parent
     end
 
-    def self.start()
+    def self.send_notification()
 
       ARGV.shift
 
