@@ -29,6 +29,6 @@ module NotifyPush
     #def uninstall(component)
       #puts "installing..."
     #end
-  #end
+  end
 
 end
