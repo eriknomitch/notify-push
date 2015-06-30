@@ -3,6 +3,10 @@
 # ------------------------------------------------
 # TRAPS ------------------------------------------
 # ------------------------------------------------
+
+# We want to trap these signals early because loading
+# everything takes a bit of time... The user could
+# Ctrl-C before that happens.
 trap "SIGINT" do
   exit 130
 end
@@ -14,12 +18,12 @@ end
 # ------------------------------------------------
 # MAIN -------------------------------------------
 # ------------------------------------------------
+
+# Requiring "notify-push" will subsequently require the Thor app (CLI)
+# and run everything.
 begin
   require "notify-push"
 rescue LoadError
   require "rubygems"
   require "notify-push"
 end
-
-#exit NotifyPush.main
-
