@@ -8,14 +8,23 @@ module NotifyPush
   # ----------------------------------------------
   class CLI < Thor
 
+    # --------------------------------------------
+    # CONFIGURATION ------------------------------
+    # --------------------------------------------
     package_name "notify-push"
 
+    # --------------------------------------------
+    # COMMAND->RECEIVE ---------------------------
+    # --------------------------------------------
     desc "receive", "Starts the Receiver daemon."
     option :silence_events, type: :boolean, default: false
     def receive()
       NotifyPush.main :receive
     end
 
+    # --------------------------------------------
+    # COMMAND->SEND ------------------------------
+    # --------------------------------------------
     desc "send MESSAGE <TITLE>", "say receive to NAME"
     def send(message, title="notify-push")
 
@@ -23,6 +32,9 @@ module NotifyPush
       NotifyPush.main :send
     end
     
+    # --------------------------------------------
+    # COMMAND->INSTALL ---------------------------
+    # --------------------------------------------
     desc "install COMPONENT", "Installs a notify-push component. Available COMPONENTs: receiver-daemon"
     def install(component)
       puts "installing..."
