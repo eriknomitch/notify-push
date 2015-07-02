@@ -25,6 +25,14 @@ For the Receiver machine and the Sender machine(s):
 $ gem install notify-push
 ```
 
+Or, from source:
+```Shell
+$ git clone https://github.com/eriknomitch/notify-push.git
+$ cd notify-push
+$ bundle install
+$ rake install
+```
+
 ### Create & Distribute Configuration File
 Next, create a configuration file with your Pusher App's credentials (found on your Pusher App's page under *App Credentials*) and distribute it to each machine (Receiver and Sender(s)).
 
