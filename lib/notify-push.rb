@@ -44,6 +44,7 @@ module NotifyPush
   # ----------------------------------------------
   # CONSTANTS ------------------------------------
   # ----------------------------------------------
+  VERSION                 = Gem.loaded_specs["notify-push"].version
   CHANNEL_NAME            = "notify-push"
   CONFIGURATION_FILE_PATH = "#{ENV["HOME"]}/.notify-pushrc"
  

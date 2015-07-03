@@ -12,6 +12,16 @@ module NotifyPush
     # CONFIGURATION ------------------------------
     # --------------------------------------------
     package_name "notify-push"
+    
+    # --------------------------------------------
+    # COMMAND->UNINSTALL -------------------------
+    # --------------------------------------------
+    desc "version", "Displays the current version of notify-push"
+    def version()
+      puts ::NotifyPush::VERSION
+    end
+
+    map "--version" => "version"
 
     # --------------------------------------------
     # COMMAND->RECEIVE ---------------------------
