@@ -78,7 +78,6 @@ module NotifyPush
   # ----------------------------------------------
   def self.on_at_exit
     self.acting_as.try(:on_at_exit)
-    puts "Exiting."
   end
   
   # ----------------------------------------------
