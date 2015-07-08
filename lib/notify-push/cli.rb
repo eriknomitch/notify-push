@@ -54,7 +54,7 @@ module NotifyPush
     # --------------------------------------------
     # COMMAND->UNINSTALL -------------------------
     # --------------------------------------------
-    desc "version", "Displays the current version of notify-push"
+    desc "version|--version", "Displays the current version of notify-push"
     def version()
       puts ::NotifyPush::VERSION
     end
