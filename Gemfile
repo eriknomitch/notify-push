@@ -11,6 +11,7 @@ gem "pidfile"
 gem "os"
 gem "notifier", github: "eriknomitch/notifier"
 gem "thor"
+gem "awesome_print"
 
 group :development do
   gem "shoulda", ">= 0"

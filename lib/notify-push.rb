@@ -9,6 +9,7 @@ require "os"
 require "notifier"
 require "thor"
 require "thor/group"
+require "awesome_print"
 
 # FIX: Development only
 require "pry" if Gem::Specification::find_all_by_name("pry").any?

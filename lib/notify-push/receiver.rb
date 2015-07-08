@@ -71,8 +71,10 @@ module NotifyPush
           puts "Warning: Failed to process notification."
           puts exception
         ensure
-          puts "----------"
-          puts data
+          puts "--------------------------------------------------"
+          puts "-> Received Push Notification at: #{Time.now.to_s}"
+          puts "--------------------------------------------------"
+          ap data
         end
       end
 
