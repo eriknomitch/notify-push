@@ -9,7 +9,7 @@ gem "activesupport"
 gem "recursive-open-struct"
 gem "pidfile"
 gem "os"
-gem "notifier"
+gem "notifier", github: "eriknomitch/notifier"
 gem "thor"
 
 group :development do
