@@ -13,7 +13,7 @@ module NotifyPush
     end
 
     def self.on_at_exit
-      notify title: "notify-push", message: "Receiver: Exiting."
+      notify title: "notify-push", message: "Receiver: Exiting.", sound: :Submarine
     end
 
     # --------------------------------------------
@@ -28,13 +28,16 @@ module NotifyPush
     # --------------------------------------------
     # NOTIFY -------------------------------------
     # --------------------------------------------
-    def self.notify(title: "notify-push", subtitle: nil, message:)
+    def self.notify(title: "notify-push", subtitle: nil, sound: :Bottle, message:)
 
       message = "#{subtitle} - #{message}" if subtitle
 
+      puts "sound: #{sound}"
+
       Notifier.notify({
         title:   title,
-        message: message
+        message: message,
+        sound:   sound
       })
     end
   
@@ -86,9 +89,10 @@ module NotifyPush
       # Bind to: Pusher Connection Established
       # ------------------------------------------
       socket.bind("pusher:connection_established") do |data|
-        Notifier.notify({
+        self.notify({
           title:   "notify-push",
-          message: "Receiver: Started & connected."
+          message: "Receiver: Started & connected.",
+          sound: :default
         })
       end
 
