@@ -32,8 +32,6 @@ module NotifyPush
 
       message = "#{subtitle} - #{message}" if subtitle
 
-      puts "sound: #{sound}"
-
       Notifier.notify({
         title:   title,
         message: message,
